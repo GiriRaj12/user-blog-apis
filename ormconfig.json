@@ -1,0 +1,9 @@
+{
+    "type": "postgres",
+    "url": "postgres://kxfzmmnb:qh78SQyRZN94BEqQqgw3bkcJ2SaG9b_h@satao.db.elephantsql.com:5432/kxfzmmnb",
+    "synchronize": true,
+    "logging": true,
+    "entities": [
+        "src/Models/*.js"
+    ]
+}

@@ -1,34 +1,34 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class BlogModel {
+export class Blog {
 
     @PrimaryGeneratedColumn()
     private id: string;
 
     @Column()
-    private date: string;
+    private updated_date: string;
 
     @Column()
-    private arcticleTitle: string;
+    private title: string;
 
     @Column()
-    private articleBody: string
+    private body: string
 
 
     setDate(date): void {
         this.checkNullCondition(date, 'Date');
-        this.date = date;
+        this.updated_date = date;
     }
 
     setArticleTitle(title): void {
         this.checkNullCondition(title, 'Title');
-        this.arcticleTitle = title;
+        this.title = title;
     }
 
     setArticleBody(body): void {
         this.checkNullCondition(body, 'Article Body');
-        this.articleBody = body;
+        this.body = body;
     }
 
 

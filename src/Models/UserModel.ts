@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class User {
+export class Users {
 
     @PrimaryGeneratedColumn()
     private id: number;
@@ -9,7 +9,7 @@ export class User {
     @Column({
         length: 100
     })
-    private name: string;
+    private user_name: string;
 
     @Column()
     private dob: string;
@@ -18,11 +18,11 @@ export class User {
     private metadata: string;
 
     @Column()
-    private isActive: boolean = true;
+    private isactive: boolean = true;
 
     setName(name): void {
         this.checkNullCondition(name, 'Name');
-        this.name = name;
+        this.user_name = name;
     }
 
     setDob(dob): void {
@@ -36,7 +36,7 @@ export class User {
 
     setIsActive(value): void {
         if (!value) {
-            this.isActive = true;
+            this.isactive = true;
         }
     }
 
