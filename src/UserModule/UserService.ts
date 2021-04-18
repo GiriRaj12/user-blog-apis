@@ -4,6 +4,8 @@ import * as moment from 'moment';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import firebase from 'firebase';
+import { firebaseConfig } from '../FirebaseConfig/firebaseConfig';
+import * as admin from 'firebase-admin';
 
 
 
@@ -15,6 +17,7 @@ export class UserService {
         try {
             checkInitialConditions(body);
             const user = addInitialValues(body);
+
             return JSON.stringify(await this.userRepo.save(user));
         } catch (error) {
             return JSON.stringify({ 'response': false, 'message': error.message });
@@ -22,11 +25,20 @@ export class UserService {
     }
 
     async loginUser(body): Promise<string> {
-        const email = body.email;
-        const password = body.password;
-        await firebase.auth().signInWithEmailAndPassword(email, password);
-        const token = await firebase.auth().currentUser.getIdToken();
-        return JSON.stringify({ token: token });
+        try {
+            const email = body.email;
+            const password = body.password;
+            await firebase.initializeApp({ ...firebaseConfig });
+            await firebase.auth().signOut();
+            const user = await firebase.auth().signInWithEmailAndPassword(email, password);
+            return JSON.stringify({
+                token: await user.user.getIdToken(),
+                refreshToken: user.user.refreshToken
+            });
+        } catch (err) {
+            console.log(err.message);
+            return 'Invalid User Credentials';
+        }
     }
 }
 

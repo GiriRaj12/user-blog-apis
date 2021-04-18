@@ -1,18 +1,18 @@
-import { Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { BlogService } from './BlogService';
 
-@Controller('api')
+@Controller('blog')
 export class BlogController {
 
     constructor(private readonly blogService: BlogService) { }
 
-    @Post('/blog/add')
+    @Post('/addblog')
     async signUpUser(@Req() request: Request): Promise<string> {
         return this.blogService.addBlog(request.body);
     }
 
-    @Get('/blog')
+    @Get('/getblogs')
     getUsers(@Query() query) {
         return this.blogService.getBlogs(query);
     }
