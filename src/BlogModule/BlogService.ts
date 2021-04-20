@@ -2,30 +2,40 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from '../Models/BlogModel';
+import firebase from 'firebase';
+import { APIResponse } from '../Common/APIResponse';
 
 @Injectable()
 export class BlogService {
     constructor(@InjectRepository(Blog) private blogRepo: Repository<Blog>) { }
 
 
-    async addBlog(blogModel): Promise<string> {
+    async addBlog(blogModel): Promise<object> {
         try {
             checkBlogConditions(blogModel);
-            const blog = getBlogModelAfterSettingVariables(blogModel);
-            return JSON.stringify(await this.blogRepo.save(blog));
+            const blog: Blog = getBlogModelAfterSettingVariables(blogModel);
+            const savedBlog: Blog = await this.blogRepo.save(blog);
+            createBlogInFirestore(blog);
+            return APIResponse(true, savedBlog);
         } catch (err) {
-            return JSON.stringify(getErrorObjecg(err.message));
+            return APIResponse(false, err.message);
         }
     }
 
-    async getBlogs(query): Promise<string> {
+    async getBlogs(query): Promise<object> {
         let page = 0;
         if (query.page && query.page > 0) {
             page = query.page;
         }
         const blogs = await this.blogRepo.query(formBlogQuery(page));
-        return JSON.stringify({ 'page': page, 'blogs': blogs });
+        const response = { 'page': page, 'blogs': blogs };
+        return APIResponse(true, response);
     }
+}
+
+function createBlogInFirestore(blog: Blog) {
+    const db = firebase.firestore();
+    db.collection('blogs').add(blog);
 }
 
 function getBlogModelAfterSettingVariables(blog): Blog {
@@ -34,14 +44,6 @@ function getBlogModelAfterSettingVariables(blog): Blog {
     blogModel.setArticleTitle(blog.title);
     blogModel.setDate(new Date().toLocaleString());
     return blogModel;
-}
-
-
-function getErrorObjecg(err: string): object {
-    return {
-        'response': false,
-        'message': err
-    }
 }
 
 function formBlogQuery(page) {

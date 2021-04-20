@@ -8,12 +8,12 @@ export class UserController {
     constructor(private readonly userService: UserService) { }
 
     @Post('/user/adduser')
-    async signUpUser(@Req() request: Request): Promise<string> {
+    signUpUser(@Req() request: Request): Promise<object> {
         return this.userService.addUser(request.body);
     }
 
     @Post('/user/login')
-    loginUser(@Req() request: Request) {
+    loginUser(@Req() request: Request): Promise<object> {
         return this.userService.loginUser(request.body);
     }
 

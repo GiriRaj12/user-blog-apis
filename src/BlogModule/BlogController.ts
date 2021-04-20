@@ -8,7 +8,7 @@ export class BlogController {
     constructor(private readonly blogService: BlogService) { }
 
     @Post('/addblog')
-    async signUpUser(@Req() request: Request): Promise<string> {
+    async signUpUser(@Req() request: Request): Promise<object> {
         return this.blogService.addBlog(request.body);
     }
 

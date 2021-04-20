@@ -11,13 +11,13 @@ export class UserTokenMiddleWare implements NestMiddleware {
             const verifiedToken = await admin.auth().verifyIdToken(token);
             console.log(verifiedToken);
             if (!(verifiedToken.admin || verifiedToken.user)) {
-                throw new Error("Not verified");
+                throw new Error("Nor an admin or a User");
             }
             next();
         } catch (err) {
             throw new HttpException({
                 status: HttpStatus.FORBIDDEN,
-                error: 'Token invalid'
+                error: `Error: ${err.message}`
             }, 401);
         }
     }
