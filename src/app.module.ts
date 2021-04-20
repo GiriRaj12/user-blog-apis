@@ -26,7 +26,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserTokenMiddleWare)
-      .forRoutes({ path: 'api/user/adduser', method: RequestMethod.POST })
+      .forRoutes({ path: 'auth/user/adduser', method: RequestMethod.POST })
 
     consumer
       .apply(AdminTokenMiddleware)

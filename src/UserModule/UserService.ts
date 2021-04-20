@@ -28,8 +28,16 @@ export class UserService {
         try {
             const email = body.email;
             const password = body.password;
-            await firebase.initializeApp({ ...firebaseConfig });
-            await firebase.auth().signOut();
+            if(firebase.apps.length === 0){
+                console.log("Initializing App ..")
+                await firebase.initializeApp({ ...firebaseConfig });
+            }
+            const currentUser = firebase.auth().currentUser;
+            if(currentUser){
+                console.log('Signing out');
+                await firebase.auth().signOut();
+            }
+            console.log(`Email: ${email}`);
             const user = await firebase.auth().signInWithEmailAndPassword(email, password);
             return JSON.stringify({
                 token: await user.user.getIdToken(),
