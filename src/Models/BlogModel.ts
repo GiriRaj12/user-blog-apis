@@ -1,9 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Blog {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     private id: string;
 
     @Column()
@@ -29,6 +29,15 @@ export class Blog {
     setArticleBody(body): void {
         this.checkNullCondition(body, 'Article Body');
         this.body = body;
+    }
+
+    getId(){
+        return this.id;
+    }
+
+    setId(id){
+        this.checkNullCondition(id, 'Id cannot be null or empty');
+        this.id = id;
     }
 
 

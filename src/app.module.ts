@@ -6,6 +6,7 @@ import { Blog } from './Models/BlogModel';
 import { UserModule } from './UserModule/UserModule';
 import { UserTokenMiddleWare } from './usertoken.middleware';
 import { AdminTokenMiddleware } from './admintoken.middleware';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -19,7 +20,10 @@ import { AdminTokenMiddleware } from './admintoken.middleware';
       entities: [Users, Blog],
     }),
     UserModule,
-    BlogModule
+    BlogModule,
+    ConfigModule.forRoot({
+      envFilePath: '/Users/giriraj/Documents/serverless/creds.env'
+    })
   ]
 })
 export class AppModule implements NestModule {

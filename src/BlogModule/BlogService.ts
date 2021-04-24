@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from '../Models/BlogModel';
 import firebase from 'firebase';
 import { APIResponse } from '../Common/APIResponse';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class BlogService {
@@ -14,8 +15,9 @@ export class BlogService {
         try {
             checkBlogConditions(blogModel);
             const blog: Blog = getBlogModelAfterSettingVariables(blogModel);
+            console.log(blog);
             const savedBlog: Blog = await this.blogRepo.save(blog);
-            createBlogInFirestore(blog);
+            await createBlogInFirestore(savedBlog);
             return APIResponse(true, savedBlog);
         } catch (err) {
             return APIResponse(false, err.message);
@@ -27,15 +29,17 @@ export class BlogService {
         if (query.page && query.page > 0) {
             page = query.page;
         }
+        let totalPages = await this.blogRepo.query('SELECT COUNT(*) FROM blog');
+        totalPages = Math.floor(totalPages[0].count / 10);
         const blogs = await this.blogRepo.query(formBlogQuery(page));
-        const response = { 'page': page, 'blogs': blogs };
+        const response = { 'page': page, 'blogs': blogs, totalpages: totalPages, pageLimit: 10 };
         return APIResponse(true, response);
     }
 }
 
-function createBlogInFirestore(blog: Blog) {
-    const db = firebase.firestore();
-    db.collection('blogs').add(blog);
+async function createBlogInFirestore(blog: Blog) {
+    const db = firebase.database();
+    await db.ref(`blogs/Blog_${blog.getId()}`).set(JSON.parse(JSON.stringify(blog)));
 }
 
 function getBlogModelAfterSettingVariables(blog): Blog {
@@ -43,6 +47,7 @@ function getBlogModelAfterSettingVariables(blog): Blog {
     blogModel.setArticleBody(blog.body);
     blogModel.setArticleTitle(blog.title);
     blogModel.setDate(new Date().toLocaleString());
+    blogModel.setId(v4());
     return blogModel;
 }
 
